@@ -1,24 +1,42 @@
-import logo from './logo.svg';
 import './App.css';
+import 'semantic-ui-css/semantic.min.css';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import CharacterList from './pages/CharacterList';
+import { Container, Header } from 'semantic-ui-react';
+import CharacterProfile from './pages/CharacterProfile';
 
 function App() {
+  const [characters, setCharacters] = useState([]);
+
+  const fetchCharacters = () => {
+    fetch('https://swapi.dev/api/people/')
+      .then((res) => res.json())
+      .then((data) => {
+        setCharacters(data.results);
+      });
+  };
+
+  useEffect(() => {
+    fetchCharacters();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Container style={{ marginTop: '3em' }}>
+        <Header as="h1" size="huge" textAlign="center">
+          Space Wars
+        </Header>
+        <Switch>
+          <Route path="/" exact>
+            <CharacterList characters={characters} />
+          </Route>
+          <Route path="/character/:id">
+            <CharacterProfile />
+          </Route>
+        </Switch>
+      </Container>
+    </Router>
   );
 }
 
